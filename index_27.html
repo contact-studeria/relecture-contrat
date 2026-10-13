@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Relecture de contrat &mdash; Studeria</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+
+:root {
+  --purple: #7b1ad5;
+  --violet: #a155f8;
+  --light: #e8bbff;
+  --ultralight: #f5dcff;
+  --ink: #0f0038;
+  --soft: #4a4a6a;
+  --muted: #8888a8;
+  --surface: #ffffff;
+  --white: #ffffff;
+  --teal: #06B6D4;
+  --amber: #F59E0B;
+  --rose: #F43F5E;
+  --emerald: #10B981;
+  --blue: #3B82F6;
+  --border: #dbd9e1;
+  --radius: 12px;
+  --rlg: 20px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--ink);
+  background: var(--surface);
+  line-height: 1.75;
+}
+
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 280px; height: 100vh;
+  background: var(--ink);
+  padding: 24px 16px;
+  overflow-y: auto;
+  z-index: 100;
+  transition: transform .3s;
+}
+.sidebar .logo { font-size: 19px; color: #fff; font-weight: 700; }
+.sidebar .sub {
+  font-size: 10px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 2px;
+  margin: 4px 0 20px;
+}
+.nav-section {
+  font-size: 10px; color: var(--violet);
+  text-transform: uppercase; letter-spacing: 1.5px;
+  padding: 12px 13px 4px; font-weight: 700;
+}
+.sidebar a {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 13px; margin-bottom: 2px;
+  color: rgba(255,255,255,.5);
+  text-decoration: none; font-size: 12.5px; font-weight: 500;
+  border-radius: 7px; transition: .2s;
+}
+.sidebar a:hover, .sidebar a.active { background: rgba(123,26,213,.2); color: #fff; }
+.sidebar .n { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--violet); min-width: 18px; }
+.sidebar .div { height: 1px; background: rgba(255,255,255,.06); margin: 10px 0; }
+
+.toggle {
+  display: none; position: fixed; top: 12px; left: 12px; z-index: 200;
+  background: var(--purple); color: #fff; border: none;
+  border-radius: 8px; padding: 8px 12px; font-size: 18px; cursor: pointer;
+}
+
+.main { margin-left: 280px; min-height: 100vh; }
+
+.hero {
+  background: linear-gradient(135deg, #0f0038 0%, #7b1ad5 50%, #e08aff 100%);
+  padding: 80px 50px 65px;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: -40%; right: -15%;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(123,26,213,.3), transparent 70%);
+  border-radius: 50%;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: -25%; left: 8%;
+  width: 350px; height: 350px;
+  background: radial-gradient(circle, rgba(224,138,255,.15), transparent 70%);
+  border-radius: 50%;
+}
+.hero-c { position: relative; z-index: 1; max-width: 720px; }
+.badge {
+  display: inline-block;
+  background: rgba(123,26,213,.3); color: var(--light);
+  padding: 5px 14px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  margin-bottom: 18px;
+  border: 1px solid rgba(123,26,213,.4);
+}
+.hero h1 {
+  font-size: clamp(30px, 4.5vw, 48px);
+  color: #fff; font-weight: 700; line-height: 1.15;
+  margin-bottom: 14px;
+}
+.hero h1 em { color: var(--teal); font-style: normal; }
+.hero-c > p {
+  font-size: 16px; color: rgba(255,255,255,.65);
+  max-width: 560px; margin-bottom: 24px;
+}
+.hero-tags { display: flex; gap: 16px; flex-wrap: wrap; }
+.hero-tags span { display: flex; align-items: center; gap: 6px; color: rgba(255,255,255,.45); font-size: 12px; }
+.hero-tags .ic {
+  width: 28px; height: 28px;
+  background: rgba(255,255,255,.07); border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+
+.content { max-width: 840px; margin: 0 auto; padding: 50px 32px 100px; }
+
+.ch { margin-bottom: 56px; scroll-margin-top: 20px; }
+.ch-head { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.ch-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 600;
+  color: var(--purple); background: var(--light);
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 9px; flex-shrink: 0;
+}
+.ch h2 { font-size: 24px; font-weight: 700; }
+
+.card {
+  background: var(--white); border-radius: var(--rlg);
+  padding: 32px;
+  box-shadow: 0 4px 16px rgba(123,26,213,.06);
+  border: 1px solid var(--border);
+}
+.card p { margin-bottom: 14px; color: var(--soft); font-size: 15px; }
+.card p:last-child { margin-bottom: 0; }
+.card strong { color: var(--ink); font-weight: 600; }
+.card h3 {
+  font-size: 19px; font-weight: 600; color: var(--ink);
+  margin: 26px 0 10px; padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.card h3:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+.card h4 { font-size: 14px; font-weight: 700; color: var(--purple); margin: 18px 0 6px; }
+.card ul { margin: 0 0 14px 20px; color: var(--soft); font-size: 15px; }
+.card li { margin-bottom: 4px; }
+
+.analogy {
+  background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+  border-radius: var(--radius); padding: 20px 24px;
+  margin: 18px 0; border-left: 4px solid var(--amber);
+}
+.analogy .al { font-weight: 700; color: #92400E; font-size: 13px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.analogy p { font-size: 14px; color: #78350F; margin: 0; }
+
+.prereq {
+  background: linear-gradient(135deg, #DBEAFE, #BFDBFE);
+  border-radius: var(--radius); padding: 20px 24px;
+  margin: 18px 0; border-left: 4px solid var(--blue);
+}
+.prereq .pl { font-weight: 700; color: #1E40AF; font-size: 13px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.prereq p, .prereq li { font-size: 14px; color: #1E3A5F; margin: 0; }
+.prereq ul { list-style: none; padding: 0; margin: 6px 0 0; }
+.prereq li { padding: 4px 0 4px 20px; position: relative; }
+.prereq li::before { content: '\2611'; position: absolute; left: 0; }
+
+.warning-big {
+  background: linear-gradient(135deg, #FEE2E2, #FECACA);
+  border-radius: var(--radius); padding: 20px 24px;
+  margin: 18px 0; border-left: 4px solid var(--rose);
+}
+.warning-big .wl { font-weight: 700; color: #991B1B; font-size: 13px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.warning-big p { font-size: 14px; color: #7F1D1D; margin: 0; }
+
+.steps { counter-reset: s; list-style: none; padding: 0; margin: 16px 0; }
+.steps li {
+  counter-increment: s; position: relative;
+  padding: 14px 14px 14px 50px; margin-bottom: 8px;
+  background: var(--white); border-radius: var(--radius);
+  border: 1px solid var(--border);
+  font-size: 14px; color: var(--soft); transition: .15s;
+}
+.steps li:hover { transform: translateX(2px); box-shadow: 0 2px 8px rgba(123,26,213,.05); }
+.steps li::before {
+  content: counter(s); position: absolute;
+  left: 12px; top: 50%; transform: translateY(-50%);
+  width: 24px; height: 24px;
+  background: var(--purple); color: #fff;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+.steps li strong { color: var(--ink); }
+
+.mock {
+  background: #0f0038; border-radius: var(--radius);
+  overflow: hidden; margin: 20px 0;
+  box-shadow: 0 8px 32px rgba(0,0,0,.18);
+  border: 1px solid rgba(255,255,255,.05);
+}
+.mock-bar {
+  display: flex; align-items: center; gap: 6px;
+  padding: 9px 12px; background: rgba(0,0,0,.3);
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; }
+.dot.r { background: #ff5f57; }
+.dot.y { background: #ffbd2e; }
+.dot.g { background: #28c840; }
+.mock-url { margin-left: 12px; font-size: 10.5px; color: rgba(255,255,255,.3); font-family: 'JetBrains Mono', monospace; }
+.mock-body { padding: 16px; min-height: 120px; }
+
+.tw { overflow-x: auto; margin: 16px 0; border-radius: var(--radius); border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+thead { background: var(--ink); }
+thead th { padding: 11px 14px; text-align: left; color: #fff; font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: .4px; }
+tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--soft); vertical-align: top; }
+tbody tr:nth-child(even) { background: var(--ultralight); }
+
+.tip { display: flex; gap: 12px; padding: 16px 20px; border-radius: var(--radius); margin: 16px 0; border-left: 4px solid; }
+.tip.info { background: #EFF6FF; border-color: var(--blue); }
+.tip.ok { background: #ECFDF5; border-color: var(--emerald); }
+.tip.warn { background: #FFFBEB; border-color: var(--amber); }
+.tip.err { background: #FFF1F2; border-color: var(--rose); }
+.tip-i { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+.tip-c { font-size: 13.5px; color: var(--soft); }
+.tip-c strong { color: var(--ink); display: block; margin-bottom: 2px; }
+
+.vg { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin: 16px 0; }
+.vc { background: var(--white); border-radius: var(--radius); padding: 16px; border: 1px solid var(--border); transition: .15s; }
+.vc:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(123,26,213,.07); }
+.vc .vt { font-weight: 700; color: var(--purple); font-size: 13.5px; margin-bottom: 3px; }
+.vc .vd { font-size: 12.5px; color: var(--soft); }
+.vc .ve { font-size: 11.5px; color: var(--muted); margin-top: 4px; font-style: italic; }
+
+.flow { display: flex; align-items: center; gap: 0; margin: 20px 0; flex-wrap: wrap; justify-content: center; }
+.flow-node { background: var(--white); border: 2px solid var(--border); border-radius: 14px; padding: 12px 18px; text-align: center; min-width: 120px; transition: .15s; }
+.flow-node:hover { border-color: var(--purple); box-shadow: 0 4px 14px rgba(123,26,213,.08); }
+.flow-node .fl { font-size: 22px; margin-bottom: 4px; }
+.flow-node .fn2 { font-weight: 700; font-size: 12.5px; color: var(--ink); }
+.flow-node .fd { font-size: 10.5px; color: var(--muted); }
+.flow-node.trigger { border-color: var(--emerald); background: #ECFDF5; }
+.flow-node.action { border-color: var(--blue); background: #EFF6FF; }
+.flow-node.ai { border-color: var(--purple); background: var(--ultralight); }
+.flow-arrow { font-size: 22px; color: var(--muted); padding: 0 6px; flex-shrink: 0; }
+
+.code {
+  background: #0f0038; color: #e2e8f0;
+  padding: 14px 18px; border-radius: var(--radius);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px; margin: 12px 0;
+  overflow-x: auto; line-height: 1.6;
+}
+.code .cm { color: #6b7280; }
+.code .kw { color: var(--teal); }
+.code .str { color: #fbbf24; }
+
+.annotated { background: var(--ultralight); border: 1px solid rgba(123,26,213,.1); border-radius: var(--radius); padding: 24px; margin: 18px 0; }
+.annotated .caption { font-size: 11.5px; color: var(--muted); text-align: center; margin-top: 10px; font-style: italic; }
+
+.task-list { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; padding: 16px; background: var(--ultralight); border-radius: var(--radius); }
+.task-list div { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--soft); }
+
+.footer { text-align: center; padding: 36px; color: var(--muted); font-size: 12.5px; border-top: 1px solid var(--border); margin-top: 36px; }
+
+@media (max-width: 800px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .toggle { display: block; }
+  .main { margin-left: 0; }
+  .hero { padding: 70px 20px 45px; }
+  .content { padding: 28px 16px 60px; }
+  .card { padding: 22px; }
+  .flow { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+}
+
+@media print {
+  .sidebar, .toggle, .hero { display: none !important; }
+  .main { margin-left: 0 !important; }
+  .ch { break-inside: avoid; }
+  .card { box-shadow: none !important; border: 1px solid #ddd; }
+}
+
+
+/* ================= MODELE V3 ================= */
+:root{--accent:#3B82F6;--accent-soft:#bfdbfe;--em:#FDE68A}
+.progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:300;
+  background:linear-gradient(90deg,var(--purple),var(--accent));transition:width .1s linear}
+
+.sidebar .brand{display:flex;align-items:center;gap:11px;margin-bottom:20px}
+.sidebar .brand img{width:42px;height:42px;border-radius:50%;object-fit:cover;flex-shrink:0;
+  border:2px solid var(--accent);box-shadow:0 0 0 4px rgba(255,255,255,.07)}
+.sidebar .brand .bt{min-width:0}
+.sidebar .brand .logo{font-size:14.5px;line-height:1.25;margin:0}
+.sidebar .brand .sub{margin:2px 0 0;letter-spacing:.8px;font-size:9.5px;white-space:nowrap;color:var(--accent)}
+.nav-section{color:var(--accent)}
+.sidebar .n{color:var(--accent)}
+.sidebar a{position:relative}
+.sidebar a:hover,.sidebar a.active{background:rgba(255,255,255,.08);color:#fff}
+.sidebar a.active::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:3px;
+  border-radius:0 3px 3px 0;background:var(--accent)}
+
+/* --- hero --- */
+.hero{padding:58px 50px 54px;
+  background:linear-gradient(118deg,#0f0038 0%,var(--purple) 34%,var(--accent) 88%)}
+.hero::before{top:-30%;right:-10%;width:560px;height:560px;
+  background:radial-gradient(circle,rgba(59,130,246,.55),transparent 68%)}
+.hero::after{bottom:-34%;left:-8%;width:480px;height:480px;
+  background:radial-gradient(circle,rgba(59,130,246,.32),transparent 70%)}
+.hero-grid{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px);
+  background-size:52px 52px;
+  -webkit-mask-image:radial-gradient(ellipse at 30% 50%,#000 10%,transparent 72%);
+  mask-image:radial-gradient(ellipse at 30% 50%,#000 10%,transparent 72%)}
+.hero-inner{position:relative;z-index:1;max-width:1120px;margin:0 auto;
+  display:flex;align-items:center;gap:44px}
+.hero-inner>.hero-c{flex:1 1 520px;min-width:0;max-width:600px}
+.hero h1 em{color:var(--em);font-style:normal}
+.hero h1{margin-bottom:12px}
+.hero-c>p{margin-bottom:18px}
+.hero-visual{flex:0 1 370px;min-width:0;position:relative;align-self:center;
+  display:flex;align-items:flex-end;justify-content:center}
+.hero-visual::before{content:'';position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);width:330px;height:330px;max-width:96%;
+  aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.22),rgba(255,255,255,.06) 58%,transparent 70%);
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:inset 0 0 60px rgba(255,255,255,.10)}
+.hero-visual::after{content:'';position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);width:400px;height:400px;max-width:115%;
+  aspect-ratio:1;border-radius:50%;border:1px dashed rgba(255,255,255,.14);
+  animation:spin 46s linear infinite}
+.hero-visual img{position:relative;z-index:1;width:340px;max-width:100%;display:block;
+  filter:drop-shadow(0 22px 40px rgba(0,0,0,.45));animation:floaty 7s ease-in-out infinite}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+
+/* --- bandeau logos du hero --- */
+.hero-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:18px 0 22px}
+.hero-tools .hl{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;
+  color:rgba(255,255,255,.82);font-weight:700;margin-right:4px}
+.hero-tools .ht{display:inline-flex;align-items:center;gap:7px;
+  background:#fff;border:1px solid rgba(255,255,255,.7);
+  border-radius:999px;padding:6px 14px 6px 10px;font-size:12.5px;font-weight:600;
+  color:#1b1040;box-shadow:0 4px 14px rgba(15,0,56,.22)}
+.hero-tools .ht svg{display:block;flex-shrink:0}
+.hero-tools .ht .ltr{box-shadow:none}
+
+/* lisibilite du bandeau d'informations */
+.hero-tags{gap:14px 20px}
+.hero-tags span{color:rgba(255,255,255,.92);font-size:12.5px;font-weight:500}
+.hero-tags .ic{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.22)}
+.badge{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.3);color:#fff}
+.hero-c>p{color:rgba(255,255,255,.88)}
+
+/* --- cartes connecteurs --- */
+.tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin:18px 0}
+.tool{display:flex;gap:13px;background:#fff;border:1px solid var(--border);
+  border-radius:var(--radius);padding:15px 16px;transition:.15s}
+.tool:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(123,26,213,.10)}
+.tico{width:40px;height:40px;border-radius:11px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center}
+.tname{font-size:14px;font-weight:700;color:var(--ink);display:flex;align-items:center;
+  gap:7px;flex-wrap:wrap;line-height:1.3}
+.mcp{font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
+  padding:2px 7px;border-radius:5px;background:#ECFDF5;color:#047857;border:1px solid #a7f3d0}
+.mcp.no{background:#FFF7ED;color:#9A3412;border-color:#fed7aa}
+.tdesc{font-size:12.5px;color:var(--soft);margin-top:4px;line-height:1.55}
+.ltr{display:inline-flex;align-items:center;justify-content:center;border-radius:6px;
+  color:#fff;font-weight:700;font-size:12px;font-family:'Inter',sans-serif}
+
+/* --- sommaire --- */
+.toc{margin:-18px 0 44px}
+.toc-t{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);
+  font-weight:700;margin-bottom:12px}
+.toc-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:10px}
+.toc-g a{display:flex;align-items:center;gap:10px;text-decoration:none;background:#fff;
+  border:1px solid var(--border);border-radius:var(--radius);padding:11px 14px;transition:.15s}
+.toc-g a:hover{border-color:var(--accent);transform:translateY(-2px);
+  box-shadow:0 6px 18px rgba(123,26,213,.10)}
+.toc-g .tn{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+  color:#fff;background:linear-gradient(135deg,var(--purple),var(--accent));border-radius:7px;
+  width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toc-g .tt{font-size:13px;font-weight:600;color:var(--ink);line-height:1.35}
+
+/* --- chapitres --- */
+.ch{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s ease}
+.ch.vis{opacity:1;transform:none}
+.ch-head{padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:22px}
+.ch-num{width:36px;height:36px;font-size:12px;color:#fff;
+  background:linear-gradient(135deg,var(--purple),var(--accent));
+  box-shadow:0 4px 12px rgba(123,26,213,.28)}
+.ch h2{font-size:25px;letter-spacing:-.3px}
+.card{box-shadow:0 6px 22px rgba(123,26,213,.07)}
+
+/* --- mascotte dans les conseils --- */
+.tip{position:relative}
+.tip-av{width:38px;height:38px;border-radius:50%;object-fit:cover;flex-shrink:0;
+  border:2px solid #fff;box-shadow:0 2px 8px rgba(15,0,56,.18)}
+
+/* --- bouton copier --- */
+.codewrap{position:relative;margin:12px 0}
+.codewrap .code{margin:0;padding-right:96px}
+.copybtn{position:absolute;top:10px;right:10px;z-index:2;cursor:pointer;
+  border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.10);color:#fff;
+  border-radius:8px;padding:5px 11px;font-size:11.5px;font-weight:600;
+  font-family:'Inter',sans-serif;transition:.15s}
+.copybtn:hover{background:rgba(255,255,255,.2)}
+.copybtn.done{background:#10B981;border-color:#10B981}
+
+/* --- quiz --- */
+.quiz{display:flex;flex-direction:column;gap:14px;margin:18px 0}
+.q{border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;background:#fff}
+.q .qq{font-size:14.5px;font-weight:700;color:var(--ink);margin-bottom:12px}
+.q .qq .qn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);margin-right:8px}
+.q button.opt{display:block;width:100%;text-align:left;cursor:pointer;
+  background:#fff;border:1px solid var(--border);border-radius:9px;
+  padding:10px 14px;margin-bottom:7px;font-size:13.5px;color:var(--soft);
+  font-family:'Inter',sans-serif;transition:.15s}
+.q button.opt:hover{border-color:var(--accent);background:#fcfaff}
+.q button.opt.good{background:#ECFDF5;border-color:#10B981;color:#065F46;font-weight:600}
+.q button.opt.bad{background:#FFF1F2;border-color:#F43F5E;color:#9F1239}
+.q .exp{display:none;font-size:13px;color:var(--soft);background:var(--ultralight);
+  border-radius:9px;padding:11px 14px;margin-top:6px}
+.q.answered .exp{display:block}
+.qscore{font-size:13.5px;font-weight:700;color:var(--ink);background:var(--ultralight);
+  border-radius:var(--radius);padding:13px 18px;text-align:center}
+
+/* --- retour en haut --- */
+.top{position:fixed;right:22px;bottom:22px;z-index:200;width:42px;height:42px;
+  border:none;border-radius:50%;cursor:pointer;color:#fff;font-size:17px;
+  background:linear-gradient(135deg,var(--purple),var(--accent));
+  box-shadow:0 6px 18px rgba(123,26,213,.35);
+  opacity:0;pointer-events:none;transition:opacity .25s}
+.top.show{opacity:1;pointer-events:auto}
+
+@media (max-width:1100px){
+  .hero-visual{flex:0 1 280px}
+  .hero-visual img{width:260px}
+  .hero-visual::before{width:250px;height:250px}
+  .hero-visual::after{width:305px;height:305px}
+}
+@media (max-width:900px){
+  .hero{padding:64px 20px 44px}
+  .hero-inner{flex-direction:column;align-items:flex-start;gap:14px}
+  .hero-visual{flex:none;align-self:center}
+  .hero-visual img{width:230px;max-width:62vw}
+  .hero-visual::before{width:230px;height:230px}
+  .hero-visual::after{width:275px;height:275px}
+  .hero-grid{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero-visual img{animation:none}
+  .ch{opacity:1;transform:none;transition:none}
+}
+@media print{.progress,.top,.copybtn{display:none!important}}
+
+.toolico{border-radius:5px;vertical-align:middle;object-fit:contain}
+.kitbox{border:1px solid var(--border);border-radius:var(--rlg);padding:18px 20px;margin:18px 0;background:var(--ultralight)}
+.kitbox .kl{font-weight:700;color:var(--purple);margin-bottom:6px}
+.kitbox ol{margin:8px 0 0 18px}.kitbox li{margin:6px 0}
+.filelink{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:13px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:8px 12px;text-decoration:none;color:var(--purple);word-break:break-all}
+</style>
+</head>
+<body>
+<div class="progress"></div>
+
+<button class="toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">&#9776;</button>
+
+<nav class="sidebar">
+  <div class="brand"><img src="data:image/jpeg;base64,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" alt=""><div class="bt"><div class="logo">&#128218; Agent Relecture de contrat</div><div class="sub">Kit Juridique &middot; Studeria</div></div></div>
+
+  <div class="nav-section">&#127937; D&eacute;couvrir</div>
+  <a href="#ch0"><span class="n">00</span>&Agrave; quoi sert cet agent</a>
+  <a href="#ch1"><span class="n">01</span>Ce qu'il produit</a>
+
+  <div class="div"></div>
+
+  <div class="nav-section">&#129513; Comprendre</div>
+  <a href="#ch2"><span class="n">02</span>Les 4 briques d'un agent</a>
+
+  <div class="div"></div>
+
+  <div class="nav-section">&#128295; Installer</div>
+  <a href="#ch3"><span class="n">03</span>Le prompt d'initialisation</a>
+  <a href="#ch4"><span class="n">04</span>Connecter vos outils</a>
+
+  <div class="div"></div>
+
+  <div class="nav-section">&#9889; Utiliser</div>
+  <a href="#ch5"><span class="n">05</span>Le lancer &agrave; la main</a>
+  <a href="#ch6"><span class="n">06</span>Le mettre en automatique</a>
+
+  <div class="div"></div>
+
+  <div class="nav-section">&#127891; Ma&icirc;triser</div>
+  <a href="#ch7"><span class="n">07</span>Ce qu'il ne fait pas</a>
+  <a href="#ch8"><span class="n">08</span>Si &ccedil;a ne marche pas</a>
+  <a href="#ch9"><span class="n">09</span>R&eacute;cap et exercices</a>
+  <a href="#ch10"><span class="n">10</span>Quiz de fin</a>
+</nav>
+
+<div class="main">
+
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+  <div class="hero-c">
+    <span class="badge">&#128214; Guide agent Studeria &middot; D&eacute;butant</span>
+    <h1>Votre agent de <em>relecture de contrat</em></h1>
+    <p>Le contrat pass&eacute; au crible de douze points toujours les m&ecirc;mes, avec ce qui est habituel, ce qui ne l'est pas, et surtout ce qui manque. Puis les points &agrave; ren&eacute;gocier et les questions &agrave; poser, en brouillon.</p>
+    <div class="hero-tools"><span class="hl">Se branche avec</span><span class="ht"><img class="toolico" src="data:image/png;base64,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" width="18" height="18" alt="">Google Drive</span><span class="ht"><img class="toolico" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAEkklEQVR4Ae2ZA5BkSRRFc23bv7H2Fta72V7btm3bDq3tsdkY27b9a9xmTr6IyXB0Z1W/6j8/+56IGzOB1jsdpzp+CQMAAAAAAAAAAAAAAACAEZ53xvDMoz8ekXXMqBGZxyyiDc88pnhExjHvj/S8E0Q7pW7gTtH64h0/ry/ZcVhDyQ6LaPT/+tIdX68ZtEu2aC2js484Uh+7l55qZvUjM4/+btBxhx8o2gnVg3b16kp2+k8fWzU3LeQ3NUjsK1JB/8ZfoI+7QU9ZLjHS84qE4+ij3qyPW66nLLesdsDOyVViZNaR2Toxq+iwyY6yNEiKHYVjqEFi14biHb6joyY7naRZapCwL8TW1qtUR68PYz3vUOEI1HN9yEl6KtVRsoQNw7I9aQ7ZSgmr9GtDnvPJsV+91QuzPl4nPcW1NXmRd5WUoUvSIil3XXvVGX/T8bhGfzHZCJjGKcDPi6lEXqzYl7HQJMmXZ2Xr73uSHh2Oc71sBFQzCzBbtbogts0nSX+fN/t58XL6nrkF0IuxjQCVJgG0+kRu9G2eJPEnJ5Ef/c58r9wCzIIWwJwk/uS4LoA1SfzJcV8Aa5L4k+O+AIYk8SYHAhiSxJAcCEh3knx58p768/9kvhYEtGGSVhdGT/FzY9Poc2/zAp58oMvYYVlZAQngT5LOzd0mOUEKqCzeRd3fRY4ULZH7YYW6+cVJS/qeenYAAtiSZJLzm/lcQQpYNGAfVdjh8uXR/69XVgJol7zrV/1+0W0sAhg2aJ08+8j0J4dfQL8+x6hzO1xbQ8dPSoDZezd+oShJAQugJdbkx4v4k8MvwCTnw+4RZQ6fsgDag48Xq/6nRBgEMCw39jEliS85/AIoObd2yqeD8wigXf36YvXnBTdzCGBYfBgliSE57AIoORd1uJqOzSuAlv/BRvXB9Z9RkngEMCSp2eQwrBXJ4Rdgdt+TgxT9lWQpINRrZXL4BZhd8dYyRX8luS/APjn8Aiz2zk3fUJJcFWCbnOAE0O55aiglyUUBFskJXIBJ0opGSpJjAmyTE7wAs7dv/qaRkuSUAPvkBC+AdssLkxOUJFcEUHKu71RYRQcMhQBawQcbN/4s75kfdgFde2cuOuf/66rpeKESYEZPM+mpZgiPX53Iiz5sDhdaAUJDz/Xp+X5ojp8fn+cXxM4QGicEEPQOF73TFQIB/9GDPUG4JICgp5j8SeJNjjC4KIDgTxJvctwXwJ8k1uS4L4A/SazJcV8AZ5IYkgMBDEliSA4EpD9J8XK9+4UBAtouSfR+Mb1vLAgIaPMk/WafHAjgSpJJzt3CAAGpk8iPSn3UZezJgQB7VsrIgfq4/ZJNDgQw4+fGX6YkWScHAvjx8yMXUJIYkgMBDEliTQ4E8AMBEAABEAABEAABEAABEAABEAABQQEBEDDLQkDlPAhIk4D/rv+rZQEflL8PAekREPv/httFS8h3NuyrD7eMUwAE0PGv7yVskR9tPiHvw4pJbAIgYFqs442HimSQ76gd9evB6zkfVg7T/5ZDQGqHj3S47nn52z27CgAAAAAAAAAAAAAAAAAAtFu2AJlqODQM4+yVAAAAAElFTkSuQmCC" width="18" height="18" alt="">Gmail</span><span class="ht"><img class="toolico" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAACM0lEQVR4nO3cMW5TQRSF4TMzjyjBiRFFvABaJCRKpCCLHVClYgfsAYVFsAI6U1FCg6JEoo9EywZSIBw5cay8uSkghWUKm+bXwPnaae7ot+dpmknTl49CjYhQP9zKZbqopw8+fn8e43F3dHSsty908+aTTrZ3dXA9Uy+p0LOuK9MD/O8cAOYAMAeAOQDMAWAOAHMAmAPAHADmADAHgDkAzAFgDgBzAJgDwBwA5gAwB4A5AMwBYA4AcwCYA8AcAOYAMAeAOQDMAWAOAHMAmAPAHADmADAHgDkAzAFgDgBzAJgDwBwA1kWop4fYwN2sdWUlVEPqk9Q38/aCpG64lZt5V6FWFd3L0qLfW1lM2tsZqKhXSc3sSOqmi3pKD7GBOszKOaUzSdJoFI/Pf68kfb2aaXY9V1X4aLU1pRiPO3qIjY2OI31Y/nZNJirf9pWokf5W0pdoL8C5QodpKUBMVNRgAIMlvf9xQg+xgaqdYdZ8eqZXD19rEiWUlA7Vx2e907ae6FJVqZ2PcKf7wwN6iLXVG2mQpasYSNLSkRN6pl09Vaip62Wny59tXcRyKVK6WFkJXWimXvO23ozrlBq6tkRISkV/+o3/Onbu9tLMnhr6s/6bHADmADAHgDkAzAFgDgBzAJgDwBwA5gAwB4A5AMwBYA4AcwCYA8AcAOYAMAeAOQDMAWAOAHMAmAPAHADmADAHgDkAzAFgDgBzAJgDwBwA5gAwB4A5AMwBYA4AcwCYA8AcAHYLYOlm1RkSAKIAAAAASUVORK5CYII=" width="18" height="18" alt="">Microsoft 365</span></div>
+    <div class="hero-tags"><span><span class="ic">&#127919;</span>Aucun pr&eacute;requis technique</span><span><span class="ic">&#9203;</span>15 minutes de lecture</span><span><span class="ic">&#9878;&#65039;</span>Jamais d'avis juridique</span><span><span class="ic">&#129302;</span>Kit Juridique</span></div>
+  </div>
+  <div class="hero-visual"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNDAgMzgwIiB3aWR0aD0iMzQwIiBoZWlnaHQ9IjM4MCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJGaWNoZSBkZSBsZWN0dXJlIGQndW4gY29udHJhdCBlbiBkb3V6ZSBwb2ludHMiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJjYXJkIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIuOTgiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZjVkY2ZmIiBzdG9wLW9wYWNpdHk9Ii45Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPGZpbHRlciBpZD0ic2giIHg9Ii00MCUiIHk9Ii00MCUiIHdpZHRoPSIxODAlIiBoZWlnaHQ9IjE4MCUiPgogICAgICA8ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iOSIgc3RkRGV2aWF0aW9uPSIxMCIgZmxvb2QtY29sb3I9IiMwZjAwMzgiIGZsb29kLW9wYWNpdHk9Ii4zNCIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgoKICA8IS0tIGxlIGNvbnRyYXQsIGVuIGFycmllcmUtcGxhbiAtLT4KICA8ZyBmaWx0ZXI9InVybCgjc2gpIiBvcGFjaXR5PSIuNTUiPgogICAgPHJlY3QgeD0iMzQiIHk9IjE2IiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE5NiIgcng9IjkiIGZpbGw9IiNmZmZmZmYiLz4KICAgIDxnIGZpbGw9IiM4ODg4YTgiPgogICAgICA8cmVjdCB4PSI0OCIgeT0iMzQiIHdpZHRoPSI4NiIgaGVpZ2h0PSI2IiByeD0iMyIvPgogICAgICA8cmVjdCB4PSI0OCIgeT0iNTAiIHdpZHRoPSIxMjAiIGhlaWdodD0iNCIgcng9IjIiLz4KICAgICAgPHJlY3QgeD0iNDgiIHk9IjYwIiB3aWR0aD0iMTIwIiBoZWlnaHQ9IjQiIHJ4PSIyIi8+CiAgICAgIDxyZWN0IHg9IjQ4IiB5PSI3MCIgd2lkdGg9Ijk4IiBoZWlnaHQ9IjQiIHJ4PSIyIi8+CiAgICAgIDxyZWN0IHg9IjQ4IiB5PSI4NiIgd2lkdGg9IjEyMCIgaGVpZ2h0PSI0IiByeD0iMiIvPgogICAgICA8cmVjdCB4PSI0OCIgeT0iOTYiIHdpZHRoPSIxMTIiIGhlaWdodD0iNCIgcng9IjIiLz4KICAgICAgPHJlY3QgeD0iNDgiIHk9IjExMiIgd2lkdGg9IjEyMCIgaGVpZ2h0PSI0IiByeD0iMiIvPgogICAgICA8cmVjdCB4PSI0OCIgeT0iMTIyIiB3aWR0aD0iNzYiIGhlaWdodD0iNCIgcng9IjIiLz4KICAgICAgPHJlY3QgeD0iNDgiIHk9IjEzOCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSI0IiByeD0iMiIvPgogICAgICA8cmVjdCB4PSI0OCIgeT0iMTQ4IiB3aWR0aD0iMTA0IiBoZWlnaHQ9IjQiIHJ4PSIyIi8+CiAgICAgIDxyZWN0IHg9IjQ4IiB5PSIxNjQiIHdpZHRoPSIxMjAiIGhlaWdodD0iNCIgcng9IjIiLz4KICAgICAgPHJlY3QgeD0iNDgiIHk9IjE3NCIgd2lkdGg9Ijg4IiBoZWlnaHQ9IjQiIHJ4PSIyIi8+CiAgICAgIDxyZWN0IHg9IjQ4IiB5PSIxOTAiIHdpZHRoPSIxMjAiIGhlaWdodD0iNCIgcng9IjIiLz4KICAgIDwvZz4KICA8L2c+CgogIDwhLS0gbGEgZmljaGUgZGUgbGVjdHVyZSwgYXUgcHJlbWllciBwbGFuIC0tPgogIDxnIGZpbHRlcj0idXJsKCNzaCkiPgogICAgPHJlY3QgeD0iMTE4IiB5PSI2MiIgd2lkdGg9IjE5NiIgaGVpZ2h0PSIxOTYiIHJ4PSIxMSIgZmlsbD0idXJsKCNjYXJkKSIvPgogIDwvZz4KICA8dGV4dCB4PSIxMzQiIHk9Ijg0IiBmb250LWZhbWlseT0iSW50ZXIsc3lzdGVtLXVpLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iOS41IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjN2IxYWQ1IiBsZXR0ZXItc3BhY2luZz0iMS4xIj5GSUNIRSBERSBMRUNUVVJFPC90ZXh0PgogIDxsaW5lIHgxPSIxMzQiIHkxPSI5MiIgeDI9IjI5OCIgeTI9IjkyIiBzdHJva2U9IiNkYmQ5ZTEiIHN0cm9rZS13aWR0aD0iMSIvPgoKICA8IS0tIGxpZ25lcyA6IGhhYml0dWVsIC8gaW5oYWJpdHVlbCAvIGFic2VudCAtLT4KICA8ZyBmb250LWZhbWlseT0iSW50ZXIsc3lzdGVtLXVpLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTAiIGZpbGw9IiMwZjAwMzgiPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTM0LDEwNCkiPgogICAgICA8Y2lyY2xlIGN4PSI2IiBjeT0iNiIgcj0iNiIgZmlsbD0iIzEwQjk4MSIvPjxwYXRoIGQ9Ik0zLjIgNiBsMiAyLjIgbDMuNyAtNC4yIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMS42IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICAgICAgPHRleHQgeD0iMjAiIHk9IjkiPk9iamV0LCBkdXLDqWU8L3RleHQ+CiAgICA8L2c+CiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMzQsMTI4KSI+CiAgICAgIDxjaXJjbGUgY3g9IjYiIGN5PSI2IiByPSI2IiBmaWxsPSIjMTBCOTgxIi8+PHBhdGggZD0iTTMuMiA2IGwyIDIuMiBsMy43IC00LjIiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIxLjYiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogICAgICA8dGV4dCB4PSIyMCIgeT0iOSI+UHJpeCBldCByw6l2aXNpb248L3RleHQ+CiAgICA8L2c+CiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMzQsMTUyKSI+CiAgICAgIDxjaXJjbGUgY3g9IjYiIGN5PSI2IiByPSI2IiBmaWxsPSIjRjU5RTBCIi8+PHRleHQgeD0iNiIgeT0iOS41IiBmb250LXNpemU9IjguNSIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzBmMDAzOCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+ITwvdGV4dD4KICAgICAgPHRleHQgeD0iMjAiIHk9IjkiIGZvbnQtd2VpZ2h0PSI3MDAiPlByw6lhdmlzIDogMyBtb2lzPC90ZXh0PgogICAgICA8dGV4dCB4PSIyMCIgeT0iMjAiIGZvbnQtc2l6ZT0iOCIgZmlsbD0iI0Y1OUUwQiIgZm9udC13ZWlnaHQ9IjcwMCI+SW5oYWJpdHVlbDwvdGV4dD4KICAgIDwvZz4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEzNCwxODYpIj4KICAgICAgPGNpcmNsZSBjeD0iNiIgY3k9IjYiIHI9IjYiIGZpbGw9IiNGNDNGNUUiLz48dGV4dCB4PSI2IiB5PSI5LjUiIGZvbnQtc2l6ZT0iOC41IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4hPC90ZXh0PgogICAgICA8dGV4dCB4PSIyMCIgeT0iOSIgZm9udC13ZWlnaHQ9IjcwMCI+UGxhZm9uZCBkZSByZXNwb25zYWJpbGl0w6k8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjIwIiB5PSIyMCIgZm9udC1zaXplPSI4IiBmaWxsPSIjRjQzRjVFIiBmb250LXdlaWdodD0iNzAwIj5BYnNlbnQgZHUgY29udHJhdDwvdGV4dD4KICAgIDwvZz4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEzNCwyMjApIj4KICAgICAgPGNpcmNsZSBjeD0iNiIgY3k9IjYiIHI9IjYiIGZpbGw9IiMxMEI5ODEiLz48cGF0aCBkPSJNMy4yIDYgbDIgMi4yIGwzLjcgLTQuMiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjEuNiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgICAgIDx0ZXh0IHg9IjIwIiB5PSI5Ij5Ecm9pdCBhcHBsaWNhYmxlPC90ZXh0PgogICAgPC9nPgogIDwvZz4KCiAgPCEtLSBjb21wdGV1ciAxMiBwb2ludHMgLS0+CiAgPGcgZmlsdGVyPSJ1cmwoI3NoKSI+CiAgICA8cmVjdCB4PSIxNCIgeT0iMjc2IiB3aWR0aD0iMTQ2IiBoZWlnaHQ9IjQ4IiByeD0iMTEiIGZpbGw9IiM3YjFhZDUiLz4KICAgIDx0ZXh0IHg9Ijg3IiB5PSIyOTYiIGZvbnQtZmFtaWx5PSInSmV0QnJhaW5zIE1vbm8nLG1vbm9zcGFjZSIgZm9udC1zaXplPSIxNyIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZmZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+MTI8L3RleHQ+CiAgICA8dGV4dCB4PSI4NyIgeT0iMzEzIiBmb250LWZhbWlseT0iSW50ZXIsc3lzdGVtLXVpLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iOC41IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjZThiYmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBsZXR0ZXItc3BhY2luZz0iLjgiPlBPSU5UUyBWw4lSSUZJw4lTPC90ZXh0PgogIDwvZz4KICA8ZyBmaWx0ZXI9InVybCgjc2gpIj4KICAgIDxyZWN0IHg9IjE3MiIgeT0iMjc2IiB3aWR0aD0iMTU0IiBoZWlnaHQ9IjQ4IiByeD0iMTEiIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9Ii45NiIvPgogICAgPHRleHQgeD0iMjQ5IiB5PSIyOTYiIGZvbnQtZmFtaWx5PSInSmV0QnJhaW5zIE1vbm8nLG1vbm9zcGFjZSIgZm9udC1zaXplPSIxNyIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0Y0M0Y1RSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+MTwvdGV4dD4KICAgIDx0ZXh0IHg9IjI0OSIgeT0iMzEzIiBmb250LWZhbWlseT0iSW50ZXIsc3lzdGVtLXVpLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iOC41IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjNGE0YTZhIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBsZXR0ZXItc3BhY2luZz0iLjgiPkNMQVVTRSBBQlNFTlRFPC90ZXh0PgogIDwvZz4KCiAgPCEtLSByYXBwZWwgOiBwYXMgZCdhdmlzIGp1cmlkaXF1ZSAtLT4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNCwzMzgpIj4KICAgIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIzMTIiIGhlaWdodD0iMjgiIHJ4PSI5IiBmaWxsPSIjMGYwMDM4IiBvcGFjaXR5PSIuNTUiLz4KICAgIDx0ZXh0IHg9IjE1NiIgeT0iMTgiIGZvbnQtZmFtaWx5PSJJbnRlcixzeXN0ZW0tdWksc2Fucy1zZXJpZiIgZm9udC1zaXplPSI5LjUiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmZmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkphbWFpcyBkJ2F2aXMganVyaWRpcXVlIMK3IGphbWFpcyDCqyB2b3VzIHBvdXZleiBzaWduZXIgwrs8L3RleHQ+CiAgPC9nPgo8L3N2Zz4K" alt=""></div>
+  </div>
+</div>
+
+<div class="content">
+
+<div class="toc"><div class="toc-t">Sommaire du guide</div><div class="toc-g"><a href="#ch0"><span class="tn">00</span><span class="tt">&Agrave; quoi sert cet agent</span></a><a href="#ch1"><span class="tn">01</span><span class="tt">Ce qu'il produit</span></a><a href="#ch2"><span class="tn">02</span><span class="tt">Les 4 briques d'un agent</span></a><a href="#ch3"><span class="tn">03</span><span class="tt">Le prompt d'initialisation</span></a><a href="#ch4"><span class="tn">04</span><span class="tt">Connecter vos outils</span></a><a href="#ch5"><span class="tn">05</span><span class="tt">Le lancer &agrave; la main</span></a><a href="#ch6"><span class="tn">06</span><span class="tt">Le mettre en automatique</span></a><a href="#ch7"><span class="tn">07</span><span class="tt">Ce qu'il ne fait pas</span></a><a href="#ch8"><span class="tn">08</span><span class="tt">Si &ccedil;a ne marche pas</span></a><a href="#ch9"><span class="tn">09</span><span class="tt">R&eacute;cap et exercices</span></a><a href="#ch10"><span class="tn">10</span><span class="tt">Quiz de fin</span></a></div></div>
+
+
+
+
+<!-- ===== CH 00 ===== -->
+<div class="ch" id="ch0">
+  <div class="ch-head"><span class="ch-num">00</span><h2>&Agrave; quoi sert cet agent</h2></div>
+  <div class="card">
+
+    <p>Un client vous envoie son contrat-cadre. Douze pages, interligne serr&eacute;, et une phrase dans le mail&nbsp;: &laquo;&nbsp;c'est notre mod&egrave;le habituel, rien de particulier&nbsp;&raquo;. Vous avez deux options&nbsp;: payer une relecture par un avocat, qui co&ucirc;te parfois une part non n&eacute;gligeable de ce que le contrat rapporte, ou signer en diagonale.</p>
+    <p>La plupart des gens signent en diagonale. Et ce n'est pas la clause qu'ils ont lue qui leur pose probl&egrave;me un an plus tard&nbsp;: c'est celle qui n'y &eacute;tait pas.</p>
+    <p>Cet agent fait la relecture syst&eacute;matique que vous n'avez pas le temps de faire&nbsp;: il passe le contrat au crible de <strong>douze points</strong> toujours les m&ecirc;mes, dit pour chacun ce que le contrat pr&eacute;voit et si c'est habituel, et <strong>signale ce qui est absent</strong>. Il ne vous dit jamais s'il faut signer.</p>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th></th><th>Sans l'agent</th><th>Avec l'agent</th></tr></thead>
+        <tbody>
+          <tr><td>&#128269; La lecture</td><td>En diagonale, en cherchant le prix et la dur&eacute;e</td><td>Douze points, toujours les m&ecirc;mes, dans le m&ecirc;me ordre</td></tr>
+          <tr><td>&#10067; Les absences</td><td>Invisibles &mdash; on ne rep&egrave;re pas ce qui n'est pas &eacute;crit</td><td>Signal&eacute;es explicitement</td></tr>
+          <tr><td>&#9878;&#65039; L'anormal</td><td>Impossible &agrave; juger sans point de comparaison</td><td>Chaque clause est dite habituelle ou inhabituelle</td></tr>
+          <tr><td>&#128172; La n&eacute;gociation</td><td>&laquo;&nbsp;&Ccedil;a me g&ecirc;ne un peu&nbsp;&raquo;, sans savoir quoi demander</td><td>Une liste courte, class&eacute;e, avec la formulation de remplacement</td></tr>
+          <tr><td>&#128176; Le co&ucirc;t</td><td>Un avocat, ou rien</td><td>L'avocat sur les contrats qui le m&eacute;ritent, pr&eacute;par&eacute;s</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="analogy">
+      <div class="al">&#129658; L'analogie de l'ordonnance</div>
+      <p>Un pharmacien ne pose pas de diagnostic et ne remplace pas le m&eacute;decin. Mais il lit l'ordonnance, rep&egrave;re une interaction, et vous dit&nbsp;: &laquo;&nbsp;demandez &agrave; votre m&eacute;decin pourquoi ces deux-l&agrave; ensemble&nbsp;&raquo;. C'est exactement le r&ocirc;le de cet agent face &agrave; un contrat.</p>
+    </div>
+
+    <div class="tip info">
+      <span class="tip-i">&#128100;</span>
+      <div class="tip-c"><strong>Pour qui c'est fait</strong>Celui qui re&ccedil;oit des contrats r&eacute;digés par l'autre partie et les signe sans conseil&nbsp;: ind&eacute;pendant, dirigeant de TPE, responsable d'association. Pas pour r&eacute;diger un contrat, pour en lire un.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== CH 01 ===== -->
+<div class="ch" id="ch1">
+  <div class="ch-head"><span class="ch-num">01</span><h2>Ce qu'il produit</h2></div>
+  <div class="card">
+
+    <p>Trois livrables, qui s'encha&icirc;nent du constat &agrave; l'action.</p>
+
+    <h3>1. La fiche de lecture</h3>
+    <p>Le contrat ramen&eacute; &agrave; douze points, toujours les m&ecirc;mes. Pour chacun&nbsp;: ce que dit le contrat, et si c'est habituel ou inhabituel.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Les douze points</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>Objet</td><td>Dur&eacute;e</td></tr>
+          <tr><td>Reconduction</td><td>Pr&eacute;avis</td></tr>
+          <tr><td>Prix et r&eacute;vision</td><td>P&eacute;nalit&eacute;s</td></tr>
+          <tr><td>R&eacute;siliation</td><td>Responsabilit&eacute; et plafond</td></tr>
+          <tr><td>Confidentialit&eacute;</td><td>Propri&eacute;t&eacute; intellectuelle</td></tr>
+          <tr><td>Donn&eacute;es personnelles</td><td>Droit applicable et tribunal comp&eacute;tent</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tip warn">
+      <span class="tip-i">&#128269;</span>
+      <div class="tip-c"><strong>Ce qui est absent est signal&eacute; au m&ecirc;me titre que ce qui est &eacute;crit</strong>C'est l&agrave; que la grille fixe prend tout son sens. Vous ne pouvez pas rep&eacute;rer l'absence d'un plafond de responsabilit&eacute; en lisant un contrat de haut en bas&nbsp;: rien n'attire l'&oelig;il sur une clause qui n'existe pas. Vous la rep&eacute;rez parce que vous cherchez les douze points, et qu'il en manque un.</div>
+    </div>
+
+    <h3>2. Les points de vigilance</h3>
+    <p>La liste courte de ce qui m&eacute;rite d'&ecirc;tre pr&eacute;cis&eacute; ou ren&eacute;goci&eacute;, <strong>class&eacute;e par ordre d'importance</strong>, et pour chaque ligne la formulation de remplacement &agrave; proposer. Pas quinze remarques&nbsp;: les trois ou quatre qui comptent.</p>
+
+    <h3>3. Les questions &agrave; l'autre partie</h3>
+    <p>Un mail en brouillon, une question par point &agrave; clarifier, sans jargon. C'est souvent le livrable le plus utile&nbsp;: beaucoup de clauses inhabituelles ne sont pas des pi&egrave;ges, juste des restes d'un mod&egrave;le recopi&eacute;, et une question suffit &agrave; les faire tomber.</p>
+
+    <div class="tip err">
+      <span class="tip-i">&#9878;&#65039;</span>
+      <div class="tip-c"><strong>Il ne donne jamais d'avis juridique</strong>Il d&eacute;crit, il compare &agrave; l'usage, il signale. Il ne dit jamais &laquo;&nbsp;cette clause est ill&eacute;gale&nbsp;&raquo;, ni &laquo;&nbsp;vous pouvez signer&nbsp;&raquo;. Ce n'est pas une prudence de fa&ccedil;ade&nbsp;: donner une consultation juridique est une activit&eacute; r&eacute;glement&eacute;e, r&eacute;serv&eacute;e &agrave; des professionnels habilit&eacute;s, et elle engage leur responsabilit&eacute;.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== CH 02 ===== -->
+<div class="ch" id="ch2">
+  <div class="ch-head"><span class="ch-num">02</span><h2>Les 4 briques d'un agent</h2></div>
+  <div class="card">
+
+    <p>Un agent n'est pas une bo&icirc;te noire. Il est fait de quatre pi&egrave;ces, et chacune a un r&ocirc;le pr&eacute;cis. Comprendre ces quatre pi&egrave;ces, c'est comprendre les trois agents du kit Juridique.</p>
+
+    <div class="vg">
+      <div class="vc">
+        <div class="vt">&#128220; Le skill</div>
+        <div class="vd">La proc&eacute;dure. Ce que l'agent doit faire, dans quel ordre, et ce qu'il doit produire &agrave; la fin.</div>
+        <div class="ve">Ici&nbsp;: lire, comparer &agrave; l'usage, signaler les absences</div>
+      </div>
+      <div class="vc">
+        <div class="vt">&#128214; Le contexte</div>
+        <div class="vd">Le fichier contexte-agent.md. Votre activit&eacute;, qui signe, le montant au-del&agrave; duquel vous faites relire par un avocat, et les points sur lesquels vous ne c&eacute;dez jamais.</div>
+        <div class="ve">Ex&nbsp;: &laquo;&nbsp;au-del&agrave; de 15&nbsp;000&nbsp;&euro;, avocat obligatoire&nbsp;&raquo;</div>
+      </div>
+      <div class="vc">
+        <div class="vt">&#128268; Le connecteur</div>
+        <div class="vd">Le branchement vers vos outils, pour qu'il lise le contrat l&agrave; o&ugrave; vous l'avez d&eacute;pos&eacute; et range la fiche &agrave; c&ocirc;t&eacute;.</div>
+        <div class="ve">Ex&nbsp;: votre stockage de fichiers, votre messagerie</div>
+      </div>
+      <div class="vc">
+        <div class="vt">&#9203; La t&acirc;che programm&eacute;e</div>
+        <div class="vd">Le d&eacute;clencheur. Ici elle sert &agrave; ce qu'aucun contrat d&eacute;pos&eacute; ne dorme sans avoir &eacute;t&eacute; lu.</div>
+        <div class="ve">Ex&nbsp;: chaque lundi &agrave; 9h</div>
+      </div>
+    </div>
+
+    <div class="flow">
+      <div class="flow-node trigger"><div class="fl">&#128196;</div><div class="fn2">Un contrat</div><div class="fd">D&eacute;pos&eacute;</div></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node"><div class="fl">&#128214;</div><div class="fn2">Contexte</div><div class="fd">Vos lignes rouges</div></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node ai"><div class="fl">&#128270;</div><div class="fn2">Skill</div><div class="fd">Les 12 points</div></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node action"><div class="fl">&#9993;&#65039;</div><div class="fn2">Vos questions</div><div class="fd">En brouillon</div></div>
+    </div>
+
+    <div class="analogy">
+      <div class="al">&#127869;&#65039; L'analogie de la recette</div>
+      <p>Le <strong>skill</strong>, c'est la recette &eacute;crite. Le <strong>contexte</strong>, ce sont vos contraintes&nbsp;: ce que vous acceptez, ce que vous refusez toujours. Les <strong>connecteurs</strong>, ce sont les portes du placard. La <strong>t&acirc;che programm&eacute;e</strong>, c'est le minuteur qui dit quand on repasse en cuisine.</p>
+    </div>
+
+    <div class="tip warn">
+      <span class="tip-i">&#9889;</span>
+      <div class="tip-c"><strong>La brique qu'on oublie, c'est le contexte</strong>Sans vos lignes rouges &eacute;crites, l'agent vous rend une fiche de lecture juste mais neutre. Avec elles, il vous dit&nbsp;: &laquo;&nbsp;l'exclusivit&eacute; de l'article&nbsp;7 est pr&eacute;cis&eacute;ment ce que vous avez dit ne jamais accepter&nbsp;&raquo;. C'est le chapitre suivant.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== CH 03 ===== -->
+<div class="ch" id="ch3">
+  <div class="ch-head"><span class="ch-num">03</span><h2>Le prompt d'initialisation</h2></div>
+  <div class="card">
+    <div class="kitbox">
+      <div class="kl">&#128230; Un kit agent, c'est deux &eacute;l&eacute;ments</div>
+      <ol>
+        <li><strong>Le fichier d'instructions</strong> &mdash; il contient tout&nbsp;: les connecteurs &agrave; brancher, les comp&eacute;tences &agrave; cr&eacute;er, les t&acirc;ches programm&eacute;es. Vous le t&eacute;l&eacute;chargez et vous le d&eacute;posez dans la conversation.</li>
+        <li><strong>Le prompt d'initialisation</strong> &mdash; une seule phrase, qui dit &agrave; Claude de lire ce fichier et d'installer l'agent.</li>
+      </ol>
+    </div>
+
+    <h3>1. T&eacute;l&eacute;chargez le fichier d'instructions</h3>
+    <p><a class="filelink" href="https://drive.google.com/file/d/1zNxKUkg7ItTu6PfnaMqMwDwy0JIcccHf/view" target="_blank" rel="noopener">&#128196; Agent-relecture-de-contrat.md</a></p>
+    <p>Ouvrez une conversation Claude, d&eacute;posez le fichier dedans, puis collez le prompt ci-dessous.</p>
+
+    <h3>2. Collez le prompt d'initialisation</h3>
+    <div class="codewrap"><button class="copybtn" type="button">Copier</button><div class="code">
+Lis le fichier Agent-relecture-de-contrat.md que je viens de te d&eacute;poser, et installe l'agent. Dans l'ordre&nbsp;: connecte les MCP qu'il liste, cr&eacute;e les skills qu'il d&eacute;crit en commen&ccedil;ant par le d&eacute;marrage, puis cr&eacute;e les t&acirc;ches programm&eacute;es. Pour chaque &eacute;l&eacute;ment, annonce ce que tu vas faire et attends mon accord avant de cr&eacute;er. S'il manque une information que le fichier ne contient pas, pose-moi la question, une &agrave; la fois, et n'invente aucune valeur. Quand tout est en place, fais-moi un r&eacute;capitulatif de ce qui est connect&eacute;, de ce qui a &eacute;t&eacute; cr&eacute;&eacute;, et de ce qui reste &agrave; faire de mon c&ocirc;t&eacute;.
+    </div></div>
+
+    <div class="tip info">
+      <span class="tip-i">&#128161;</span>
+      <div class="tip-c"><strong>Pourquoi ce prompt est &eacute;crit comme &ccedil;a</strong>Il impose trois choses&nbsp;: un ordre (connecteurs, puis comp&eacute;tences, puis t&acirc;ches), votre accord avant chaque cr&eacute;ation, et l'interdiction d'inventer une valeur manquante. Sans ces trois phrases, Claude installe vite, et vous d&eacute;couvrez les erreurs plus tard.</div>
+    </div>
+
+    <h3>3. Configurez-le&nbsp;: &laquo;&nbsp;d&eacute;marre mon agent de relecture de contrat&nbsp;&raquo;</h3>
+    <p>L'installation met l'agent en place. La configuration lui dit chez qui il travaille, et surtout <strong>ce que vous n'acceptez jamais</strong>. C'est la question qui change le plus la qualit&eacute; de la relecture.</p>
+
+    <div class="prereq">
+      <div class="pl">&#128221; Pr&eacute;parez vos r&eacute;ponses avant de lancer</div>
+      <ul>
+        <li>Votre activit&eacute; et la taille de votre entreprise</li>
+        <li>Les types de contrats que vous recevez le plus souvent</li>
+        <li>Qui signe</li>
+        <li>Le montant au-del&agrave; duquel vous faites relire par un avocat</li>
+        <li>Les d&eacute;lais de pr&eacute;avis que vous acceptez habituellement</li>
+        <li>Les points sur lesquels vous ne c&eacute;dez jamais</li>
+      </ul>
+    </div>
+
+    <div class="codewrap"><button class="copybtn" type="button">Copier</button><div class="code">
+<span class="kw">d&eacute;marre mon agent de relecture de contrat</span>
+    </div></div>
+    <p>Les questions suivent une par une. Claude &eacute;crit ensuite <strong>contexte-agent.md</strong>, relu &agrave; chaque relecture.</p>
+
+    <div class="tip ok">
+      <span class="tip-i">&#128161;</span>
+      <div class="tip-c"><strong>La question du seuil avocat n'est pas une formalit&eacute;</strong>Elle d&eacute;termine ce que l'agent fait du contrat. En dessous du seuil, il vous rend une fiche pour d&eacute;cider seul. Au-dessus, il vous rend la m&ecirc;me fiche en vous disant de la transmettre &agrave; votre conseil &mdash; et une fiche de lecture fait gagner du temps factur&eacute; &agrave; l'avocat.</div>
+    </div>
+
+    <div class="warning-big">
+      <div class="wl">&#128274; Ne donnez jamais de mot de passe ni de cl&eacute; d'API</div>
+      <p>Le kit ne vous en demandera jamais. Les connexions &agrave; vos outils se font uniquement par les &eacute;crans pr&eacute;vus pour &ccedil;a dans votre application Claude.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== CH 04 ===== -->
+<div class="ch" id="ch4">
+  <div class="ch-head"><span class="ch-num">04</span><h2>Connecter vos outils</h2></div>
+  <div class="card">
+
+    <div class="tools"><div class="tool"><span class="tico" style="background:#ffffff;border:1px solid var(--border)"><img class="toolico" src="data:image/png;base64,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" width="22" height="22" alt=""></span><div><div class="tname">Google Drive<span class="mcp ">MCP natif</span></div><div class="tdesc">Les contrats &agrave; relire et les fiches de lecture produites, rang&eacute;es c&ocirc;te &agrave; c&ocirc;te.</div></div></div><div class="tool"><span class="tico" style="background:#ffffff;border:1px solid var(--border)"><img class="toolico" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAEkklEQVR4Ae2ZA5BkSRRFc23bv7H2Fta72V7btm3bDq3tsdkY27b9a9xmTr6IyXB0Z1W/6j8/+56IGzOB1jsdpzp+CQMAAAAAAAAAAAAAAACAEZ53xvDMoz8ekXXMqBGZxyyiDc88pnhExjHvj/S8E0Q7pW7gTtH64h0/ry/ZcVhDyQ6LaPT/+tIdX68ZtEu2aC2js484Uh+7l55qZvUjM4/+btBxhx8o2gnVg3b16kp2+k8fWzU3LeQ3NUjsK1JB/8ZfoI+7QU9ZLjHS84qE4+ij3qyPW66nLLesdsDOyVViZNaR2Toxq+iwyY6yNEiKHYVjqEFi14biHb6joyY7naRZapCwL8TW1qtUR68PYz3vUOEI1HN9yEl6KtVRsoQNw7I9aQ7ZSgmr9GtDnvPJsV+91QuzPl4nPcW1NXmRd5WUoUvSIil3XXvVGX/T8bhGfzHZCJjGKcDPi6lEXqzYl7HQJMmXZ2Xr73uSHh2Oc71sBFQzCzBbtbogts0nSX+fN/t58XL6nrkF0IuxjQCVJgG0+kRu9G2eJPEnJ5Ef/c58r9wCzIIWwJwk/uS4LoA1SfzJcV8Aa5L4k+O+AIYk8SYHAhiSxJAcCEh3knx58p768/9kvhYEtGGSVhdGT/FzY9Poc2/zAp58oMvYYVlZAQngT5LOzd0mOUEKqCzeRd3fRY4ULZH7YYW6+cVJS/qeenYAAtiSZJLzm/lcQQpYNGAfVdjh8uXR/69XVgJol7zrV/1+0W0sAhg2aJ08+8j0J4dfQL8+x6hzO1xbQ8dPSoDZezd+oShJAQugJdbkx4v4k8MvwCTnw+4RZQ6fsgDag48Xq/6nRBgEMCw39jEliS85/AIoObd2yqeD8wigXf36YvXnBTdzCGBYfBgliSE57AIoORd1uJqOzSuAlv/BRvXB9Z9RkngEMCSp2eQwrBXJ4Rdgdt+TgxT9lWQpINRrZXL4BZhd8dYyRX8luS/APjn8Aiz2zk3fUJJcFWCbnOAE0O55aiglyUUBFskJXIBJ0opGSpJjAmyTE7wAs7dv/qaRkuSUAPvkBC+AdssLkxOUJFcEUHKu71RYRQcMhQBawQcbN/4s75kfdgFde2cuOuf/66rpeKESYEZPM+mpZgiPX53Iiz5sDhdaAUJDz/Xp+X5ojp8fn+cXxM4QGicEEPQOF73TFQIB/9GDPUG4JICgp5j8SeJNjjC4KIDgTxJvctwXwJ8k1uS4L4A/SazJcV8AZ5IYkgMBDEliSA4EpD9J8XK9+4UBAtouSfR+Mb1vLAgIaPMk/WafHAjgSpJJzt3CAAGpk8iPSn3UZezJgQB7VsrIgfq4/ZJNDgQw4+fGX6YkWScHAvjx8yMXUJIYkgMBDEliTQ4E8AMBEAABEAABEAABEAABEAABEAABQQEBEDDLQkDlPAhIk4D/rv+rZQEflL8PAekREPv/httFS8h3NuyrD7eMUwAE0PGv7yVskR9tPiHvw4pJbAIgYFqs442HimSQ76gd9evB6zkfVg7T/5ZDQGqHj3S47nn52z27CgAAAAAAAAAAAAAAAAAAtFu2AJlqODQM4+yVAAAAAElFTkSuQmCC" width="22" height="22" alt=""></span><div><div class="tname">Gmail<span class="mcp ">MCP natif</span></div><div class="tdesc">Les questions &agrave; l'autre partie, pr&eacute;par&eacute;es en brouillon. Il ne les envoie jamais.</div></div></div><div class="tool"><span class="tico" style="background:#ffffff;border:1px solid var(--border)"><img class="toolico" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAACM0lEQVR4nO3cMW5TQRSF4TMzjyjBiRFFvABaJCRKpCCLHVClYgfsAYVFsAI6U1FCg6JEoo9EywZSIBw5cay8uSkghWUKm+bXwPnaae7ot+dpmknTl49CjYhQP9zKZbqopw8+fn8e43F3dHSsty908+aTTrZ3dXA9Uy+p0LOuK9MD/O8cAOYAMAeAOQDMAWAOAHMAmAPAHADmADAHgDkAzAFgDgBzAJgDwBwA5gAwB4A5AMwBYA4AcwCYA8AcAOYAMAeAOQDMAWAOAHMAmAPAHADmADAHgDkAzAFgDgBzAJgDwBwA1kWop4fYwN2sdWUlVEPqk9Q38/aCpG64lZt5V6FWFd3L0qLfW1lM2tsZqKhXSc3sSOqmi3pKD7GBOszKOaUzSdJoFI/Pf68kfb2aaXY9V1X4aLU1pRiPO3qIjY2OI31Y/nZNJirf9pWokf5W0pdoL8C5QodpKUBMVNRgAIMlvf9xQg+xgaqdYdZ8eqZXD19rEiWUlA7Vx2e907ae6FJVqZ2PcKf7wwN6iLXVG2mQpasYSNLSkRN6pl09Vaip62Wny59tXcRyKVK6WFkJXWimXvO23ozrlBq6tkRISkV/+o3/Onbu9tLMnhr6s/6bHADmADAHgDkAzAFgDgBzAJgDwBwA5gAwB4A5AMwBYA4AcwCYA8AcAOYAMAeAOQDMAWAOAHMAmAPAHADmADAHgDkAzAFgDgBzAJgDwBwA5gAwB4A5AMwBYA4AcwCYA8AcAHYLYOlm1RkSAKIAAAAASUVORK5CYII=" width="22" height="22" alt=""></span><div><div class="tname">Microsoft 365<span class="mcp ext">Connecteur officiel</span></div><div class="tdesc">Outlook, SharePoint et OneDrive. Connecteur officiel d'Anthropic, <strong>en lecture par d&eacute;faut</strong>&nbsp;: l'&eacute;criture doit &ecirc;tre valid&eacute;e par un administrateur Microsoft Entra.</div></div></div></div>
+
+    <div class="tip info">
+      <span class="tip-i">&#128279;</span>
+      <div class="tip-c"><strong>Deux sortes de connecteurs, &agrave; ne pas confondre</strong><strong style="display:inline;color:inherit">MCP natif</strong>&nbsp;: d&eacute;j&agrave; dans Claude, vous l'activez en un clic (Gmail, Google Drive, Google Sheets, Google Agenda). <strong style="display:inline;color:inherit">MCP officiel</strong>&nbsp;: publi&eacute; par l'&eacute;diteur de l'outil, vous l'ajoutez vous-m&ecirc;me dans Param&egrave;tres &rsaquo; Connecteurs avec l'URL qu'il fournit. Dans les deux cas, c'est votre compte&nbsp;: l'agent ne voit que ce que votre r&ocirc;le vous autorise &agrave; voir.</div>
+    </div>
+
+    <p>C'est l'agent du catalogue qui a le moins besoin de connexions&nbsp;: deux cat&eacute;gories suffisent. Vous pouvez m&ecirc;me vous en passer compl&egrave;tement en collant le texte du contrat dans la conversation.</p>
+
+    <h3>Les deux cat&eacute;gories utilis&eacute;es ici</h3>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Cat&eacute;gorie</th><th>&Agrave; quoi &ccedil;a sert ici</th><th>Options courantes</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Stockage de fichiers</strong></td><td>Lire les contrats d&eacute;pos&eacute;s, ranger les fiches de lecture</td><td>Google Drive, SharePoint, OneDrive, Nextcloud, kDrive, Dropbox</td></tr>
+          <tr><td><strong>Messagerie</strong></td><td>Pr&eacute;parer les questions &agrave; l'autre partie, en brouillon</td><td>Gmail, Outlook (connecteur Microsoft 365), Infomaniak Mail, Proton Mail</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tip err">
+      <span class="tip-i">&#128272;</span>
+      <div class="tip-c"><strong>Un contrat est souvent couvert par une clause de confidentialit&eacute;</strong>Avant de d&eacute;poser le contrat d'un client dans un dossier partag&eacute;, v&eacute;rifiez ce que dit sa clause de confidentialit&eacute; sur la communication &agrave; des tiers et sur les outils utilis&eacute;s. Un dossier accessible &agrave; toute l'&eacute;quipe n'est pas toujours compatible avec ce qui a &eacute;t&eacute; sign&eacute;.</div>
+    </div>
+
+    <h3>Un contrat scann&eacute; de travers reste illisible</h3>
+    <p>L'agent lit ce qui est lisible. Un PDF qui contient du vrai texte passe tr&egrave;s bien&nbsp;; une photo de contrat prise en biais, beaucoup moins. Si la fiche de lecture revient avec des trous bizarres, le probl&egrave;me est presque toujours l&agrave;&nbsp;: redemandez le contrat en PDF natif &agrave; l'autre partie, c'est une demande banale.</p>
+
+    <h3>Pourquoi le kit ne nomme jamais un produit</h3>
+    <p>Dans les fichiers du kit, vous croiserez <strong>~~stockage</strong> ou <strong>~~messagerie</strong>. Ce sont des emplacements vides, volontairement. Votre fichier de contexte fait la correspondance avec vos outils r&eacute;els.</p>
+
+  </div>
+</div>
+
+<!-- ===== CH 05 ===== -->
+<div class="ch" id="ch5">
+  <div class="ch-head"><span class="ch-num">05</span><h2>Le lancer &agrave; la main</h2></div>
+  <div class="card">
+
+    <h3>La phrase la plus courte</h3>
+    <div class="codewrap"><button class="copybtn" type="button">Copier</button><div class="code">
+<span class="kw">relis ce contrat</span>
+    </div></div>
+
+    <h3>Les trois autres comp&eacute;tences</h3>
+    <div class="vg">
+      <div class="vc"><div class="vt">&laquo;&nbsp;qu'est-ce qui me g&ecirc;ne dans ce contrat&nbsp;?&nbsp;&raquo;</div><div class="vd">Les points de vigilance, class&eacute;s, avec la formulation de remplacement.</div></div>
+      <div class="vc"><div class="vt">&laquo;&nbsp;pr&eacute;pare mes questions&nbsp;&raquo;</div><div class="vd">Le mail &agrave; l'autre partie, en brouillon, une question par point.</div></div>
+      <div class="vc"><div class="vt">&laquo;&nbsp;d&eacute;marre mon agent de relecture&nbsp;&raquo;</div><div class="vd">La configuration, une seule fois.</div></div>
+    </div>
+
+    <h3>Les quatre clauses o&ugrave; se jouent les mauvaises surprises</h3>
+    <p>Sur les douze points, quatre concentrent l'essentiel des regrets. Si vous ne devez en v&eacute;rifier que quatre, ce sont ceux-l&agrave;.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>La clause</th><th>Ce qu'il faut y chercher</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Reconduction et pr&eacute;avis</strong></td><td>La date de reconduction, et surtout le pr&eacute;avis. Un pr&eacute;avis de trois mois sur un contrat annuel veut dire que votre vraie &eacute;ch&eacute;ance tombe neuf mois apr&egrave;s la signature.</td></tr>
+          <tr><td><strong>Responsabilit&eacute; et plafond</strong></td><td>Jusqu'o&ugrave; vous r&eacute;pondez si quelque chose tourne mal. Un plafond absent, c'est une responsabilit&eacute; sans limite &eacute;crite&nbsp;: c'est l'absence la plus co&ucirc;teuse des douze.</td></tr>
+          <tr><td><strong>Propri&eacute;t&eacute; intellectuelle</strong></td><td>Qui est propri&eacute;taire de ce que vous produisez, et ce que vous avez le droit de r&eacute;utiliser ensuite. Une cession totale vous interdit de reprendre vos propres m&eacute;thodes chez un autre client.</td></tr>
+          <tr><td><strong>Droit applicable et tribunal</strong></td><td>Sans int&eacute;r&ecirc;t tant que tout va bien, d&eacute;terminant ensuite. Un tribunal &agrave; l'autre bout du pays rend un litige de faible montant &eacute;conomiquement impossible &agrave; porter&nbsp;: le d&eacute;placement et la proc&eacute;dure co&ucirc;tent plus que l'enjeu.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tip ok">
+      <span class="tip-i">&#9989;</span>
+      <div class="tip-c"><strong>La question qui fait tomber beaucoup de clauses g&ecirc;nantes</strong>&laquo;&nbsp;Pouvez-vous m'expliquer ce que vous visiez avec cet article&nbsp;?&nbsp;&raquo; Beaucoup de clauses inhabituelles viennent d'un mod&egrave;le recopi&eacute; que personne n'a relu. Poser la question sans accuser laisse &agrave; l'autre partie la possibilit&eacute; de retirer la clause sans perdre la face.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== CH 06 ===== -->
+<div class="ch" id="ch6">
+  <div class="ch-head"><span class="ch-num">06</span><h2>Le mettre en automatique</h2></div>
+  <div class="card">
+
+    <p>Deux t&acirc;ches suffisent. Elles servent la m&ecirc;me chose&nbsp;: qu'aucun contrat ne reste en attente sans qu'on s'en aper&ccedil;oive.</p>
+
+    <h3>La t&acirc;che du lundi &mdash; les contrats non relus</h3>
+    <div class="codewrap"><button class="copybtn" type="button">Copier</button><div class="code"><span class="kw">Cr&eacute;e une t&acirc;che programm&eacute;e chaque lundi &agrave; 9h qui liste les contrats d&eacute;pos&eacute;s dans mon dossier de relecture depuis la semaine pass&eacute;e et qui n'ont pas encore de fiche de lecture.</span></div></div>
+
+    <h3>La t&acirc;che de r&eacute;ponse &mdash; la veille de l'&eacute;ch&eacute;ance</h3>
+    <div class="codewrap"><button class="copybtn" type="button">Copier</button><div class="code"><span class="kw">Cr&eacute;e une t&acirc;che programm&eacute;e qui, la veille d'une date de r&eacute;ponse annonc&eacute;e &agrave; l'autre partie, me rappelle le contrat en attente et ressort la fiche de lecture.</span></div></div>
+    <p>Celle-l&agrave; &eacute;vite la situation la plus d&eacute;sagr&eacute;able&nbsp;: avoir annonc&eacute; une r&eacute;ponse pour vendredi, et s'en souvenir le lundi suivant.</p>
+
+    <h3>G&eacute;rer vos t&acirc;ches</h3>
+    <div class="vg">
+      <div class="vc"><div class="vt">&#128203; Les lister</div><div class="vd">&laquo;&nbsp;montre-moi mes t&acirc;ches programm&eacute;es&nbsp;&raquo;</div></div>
+      <div class="vc"><div class="vt">&#128336; En d&eacute;caler une</div><div class="vd">&laquo;&nbsp;passe ma t&acirc;che du lundi &agrave; 14h&nbsp;&raquo;</div></div>
+      <div class="vc"><div class="vt">&#9199;&#65039; En suspendre une</div><div class="vd">&laquo;&nbsp;mets en pause la t&acirc;che de relecture&nbsp;&raquo;</div></div>
+      <div class="vc"><div class="vt">&#128465;&#65039; En supprimer une</div><div class="vd">&laquo;&nbsp;supprime ma t&acirc;che du lundi&nbsp;&raquo;</div></div>
+    </div>
+
+    <div class="tip warn">
+      <span class="tip-i">&#9889;</span>
+      <div class="tip-c"><strong>Un contrat non relu n'est pas un contrat en attente</strong>C'est un contrat qu'on finira par signer sans l'avoir lu, parce que l'autre partie relance et qu'il faut avancer. La t&acirc;che du lundi existe pour &ccedil;a.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== CH 07 ===== -->
+<div class="ch" id="ch7">
+  <div class="ch-head"><span class="ch-num">07</span><h2>Ce qu'il ne fait pas</h2></div>
+  <div class="card">
+
+    <p>Quatre interdits, &eacute;crits dans le fichier d'instructions. Ils ne se configurent pas.</p>
+
+    <div class="vg">
+      <div class="vc"><div class="vt">&#128683; Il ne donne aucun avis juridique</div><div class="vd">Il d&eacute;crit ce que dit le contrat et le compare &agrave; l'usage. Il ne qualifie pas une clause d'ill&eacute;gale ou d'abusive.</div></div>
+      <div class="vc"><div class="vt">&#128683; Il ne dit jamais s'il faut signer</div><div class="vd">C'est votre d&eacute;cision, et elle d&eacute;pend d'&eacute;l&eacute;ments qui ne sont pas dans le contrat&nbsp;: la relation, l'urgence, ce que vous &ecirc;tes pr&ecirc;t &agrave; risquer.</div></div>
+      <div class="vc"><div class="vt">&#128683; Il ne n&eacute;gocie pas &agrave; votre place</div><div class="vd">Il pr&eacute;pare les questions et les formulations de remplacement. C'est vous qui les portez.</div></div>
+      <div class="vc"><div class="vt">&#128683; Il n'envoie aucun mail</div><div class="vd">Tout reste en brouillon, y compris quand la date de r&eacute;ponse approche.</div></div>
+    </div>
+
+    <h3>O&ugrave; s'arr&ecirc;te l'agent, o&ugrave; commence l'avocat</h3>
+    <p>La fronti&egrave;re est nette&nbsp;: l'agent travaille sur <strong>ce qui est &eacute;crit dans le document</strong>. D&egrave;s qu'il faut interpr&eacute;ter un texte au regard de la loi, appr&eacute;cier un risque contentieux ou arbitrer entre deux lectures possibles, c'est un avocat. Le seuil que vous avez donn&eacute; au d&eacute;marrage sert exactement &agrave; tracer cette ligne.</p>
+
+    <div class="tip info">
+      <span class="tip-i">&#128161;</span>
+      <div class="tip-c"><strong>La fiche de lecture fait gagner du temps &agrave; l'avocat</strong>Arriver chez son conseil avec douze points d&eacute;j&agrave; relev&eacute;s et trois questions pr&eacute;cises, ce n'est pas lui retirer du travail&nbsp;: c'est lui &eacute;viter la premi&egrave;re heure de lecture, celle que vous payez sans en tirer de conseil.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== CH 08 ===== -->
+<div class="ch" id="ch8">
+  <div class="ch-head"><span class="ch-num">08</span><h2>Si &ccedil;a ne marche pas</h2></div>
+  <div class="card">
+
+    <h3>La fiche de lecture a des trous</h3>
+    <p>Le contrat n'est pas lisible par la machine&nbsp;: c'est un scan, une photo, ou un PDF image. Redemandez-le en PDF natif. C'est une demande banale, et elle vous &eacute;vite de retaper douze pages.</p>
+
+    <h3>Il dit qu'une clause est &laquo;&nbsp;inhabituelle&nbsp;&raquo; sans que &ccedil;a me parle</h3>
+    <p>Demandez pourquoi&nbsp;: &laquo;&nbsp;explique-moi en quoi cette clause sort de l'usage, et ce qu'on voit habituellement &agrave; la place&nbsp;&raquo;. La comparaison est souvent plus parlante que le constat.</p>
+
+    <h3>La liste des points de vigilance est trop longue</h3>
+    <p>Dites-le&nbsp;: &laquo;&nbsp;garde-moi les trois qui comptent vraiment&nbsp;&raquo;. Un contrat qui remonte quinze points de vigilance n'est pas exploitable en n&eacute;gociation&nbsp;: vous passerez pour tatillon et vous perdrez les deux qui comptaient.</p>
+
+    <h3>Le mail de questions fait trop juridique</h3>
+    <p>C'est un r&eacute;glage de ton, dites-le dans le contexte&nbsp;: &laquo;&nbsp;mes mails doivent rester simples, je travaille avec des artisans, pas avec des juristes&nbsp;&raquo;. Toutes les relectures suivantes suivront.</p>
+
+    <h3>Il refuse de me dire si je peux signer</h3>
+    <p>C'est le fonctionnement attendu, pas un bug. Reformulez&nbsp;: &laquo;&nbsp;qu'est-ce qui, dans ce contrat, m'exposerait le plus si &ccedil;a se passait mal&nbsp;?&nbsp;&raquo; L&agrave;, il r&eacute;pond, parce que c'est une description, pas un conseil.</p>
+
+    <h3>Le r&eacute;flexe qui r&egrave;gle le reste</h3>
+    <p>Dites-lui ce qui ne va pas, en langage courant. &laquo;&nbsp;Tu as rat&eacute; l'annexe 2&nbsp;&raquo;, &laquo;&nbsp;concentre-toi sur la responsabilit&eacute;&nbsp;&raquo;, &laquo;&nbsp;compare avec le contrat qu'on a sign&eacute; l'an dernier&nbsp;&raquo;. Il corrige, et si la remarque vaut toujours, demandez-lui de l'&eacute;crire dans le contexte.</p>
+
+  </div>
+</div>
+
+<!-- ===== CH 09 ===== -->
+<div class="ch" id="ch9">
+  <div class="ch-head"><span class="ch-num">09</span><h2>R&eacute;cap et exercices</h2></div>
+  <div class="card">
+
+    <h3>Ce que vous savez maintenant faire</h3>
+    <div class="vg">
+      <div class="vc"><div class="vt">&#9989; Installer l'agent</div><div class="vd">D&eacute;poser le fichier d'instructions, coller le prompt d'initialisation, valider chaque cr&eacute;ation.</div></div>
+      <div class="vc"><div class="vt">&#9989; Reconna&icirc;tre les 4 briques</div><div class="vd">Skill, contexte, connecteur, t&acirc;che programm&eacute;e.</div></div>
+      <div class="vc"><div class="vt">&#9989; Lire par grille, pas en diagonale</div><div class="vd">Douze points, toujours les m&ecirc;mes, dans le m&ecirc;me ordre.</div></div>
+      <div class="vc"><div class="vt">&#9989; Rep&eacute;rer une absence</div><div class="vd">Un plafond de responsabilit&eacute; qui manque ne se voit pas &agrave; la lecture. Il se voit &agrave; la grille.</div></div>
+      <div class="vc"><div class="vt">&#9989; Poser vos lignes rouges</div><div class="vd">Et votre seuil avocat, qui d&eacute;cide de ce que l'agent fait du contrat.</div></div>
+      <div class="vc"><div class="vt">&#9989; Passer en automatique</div><div class="vd">Cr&eacute;er, lister, d&eacute;caler et supprimer une t&acirc;che.</div></div>
+    </div>
+
+    <h3>Exercices pratiques</h3>
+    <p>Quatre exercices de difficult&eacute; croissante.</p>
+
+    <h4>&#128994; Facile &mdash; Un contrat que vous avez d&eacute;j&agrave; sign&eacute; (&asymp; 20 min)</h4>
+    <p>Prenez un contrat en cours et demandez la fiche de lecture. Regardez les points marqu&eacute;s absents&nbsp;: ce sont des engagements que vous avez pris sans le savoir.</p>
+
+    <h4>&#128993; Moyen &mdash; Vos lignes rouges (&asymp; 15 min)</h4>
+    <p>&Eacute;crivez les trois points sur lesquels vous ne c&eacute;dez jamais, puis mettez-les dans le contexte. Relancez la fiche du m&ecirc;me contrat&nbsp;: elle ne dit plus la m&ecirc;me chose.</p>
+
+    <h4>&#128308; Difficile &mdash; La relecture compl&egrave;te (&asymp; 45 min)</h4>
+    <p>Sur un contrat en attente de signature&nbsp;: fiche de lecture, points de vigilance, puis mail de questions. Envoyez-le vraiment, et notez combien de clauses tombent &agrave; la premi&egrave;re question.</p>
+
+    <h4>&#128995; Exploration &mdash; Deux contrats face &agrave; face (&asymp; 30 min)</h4>
+    <p>Faites relire deux contrats du m&ecirc;me type sign&eacute;s avec deux clients diff&eacute;rents, et comparez les douze points. L'&eacute;cart entre les deux vous dit ce que vous auriez pu n&eacute;gocier.</p>
+
+    <div class="analogy">
+      <div class="al">&#128640; Et maintenant&nbsp;?</div>
+      <p>Relecture de contrat est le premier des trois agents du kit Juridique. <strong>Conformit&eacute; RGPD d'un outil</strong> traite la question qui revient &agrave; chaque nouvel outil adopt&eacute;, et <strong>&Eacute;ch&eacute;ancier des obligations</strong> tient le calendrier de ce que votre structure doit faire et quand. Les trois lisent le m&ecirc;me contexte.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div class="ch" id="ch10">
+  <div class="ch-head"><span class="ch-num">10</span><h2>Quiz de fin</h2></div>
+  <div class="card">
+    <p>Trois questions pour v&eacute;rifier que l'essentiel est pass&eacute;. Cliquez sur la r&eacute;ponse qui vous semble juste&nbsp;: la correction s'affiche aussit&ocirc;t.</p>
+    <div class="quiz"><div class="q"><div class="qq"><span class="qn">Q1</span>Le contrat ne pr&eacute;voit aucun plafond de responsabilit&eacute;. Que fait l'agent&nbsp;?</div><button class="opt" type="button" data-ok="0">Il ne dit rien, puisqu'il n'y a rien &agrave; lire</button><button class="opt" type="button" data-ok="1">Il signale l'absence au m&ecirc;me titre qu'une clause &eacute;crite</button><button class="opt" type="button" data-ok="0">Il propose un plafond standard</button><div class="exp">C'est tout l'int&eacute;r&ecirc;t d'une grille fixe&nbsp;: une clause absente n'attire pas l'&oelig;il &agrave; la lecture, mais elle manque quand on cherche les douze points. Un plafond absent est l'absence la plus co&ucirc;teuse des douze.</div></div><div class="q"><div class="qq"><span class="qn">Q2</span>Vous demandez &agrave; l'agent si la clause de non-concurrence est l&eacute;gale. Que r&eacute;pond-il&nbsp;?</div><button class="opt" type="button" data-ok="0">Il tranche, en citant le code</button><button class="opt" type="button" data-ok="1">Il d&eacute;crit ce qu'elle pr&eacute;voit et dit si c'est habituel, sans qualifier sa l&eacute;galit&eacute;</button><button class="opt" type="button" data-ok="0">Il refuse de parler de cette clause</button><div class="exp">Il d&eacute;crit et compare &agrave; l'usage, il ne qualifie jamais. Donner une consultation juridique sur la l&eacute;galit&eacute; d'une clause est une activit&eacute; r&eacute;glement&eacute;e, r&eacute;serv&eacute;e &agrave; des professionnels habilit&eacute;s&nbsp;: c'est pour &ccedil;a que vous avez donn&eacute; un seuil au d&eacute;marrage.</div></div><div class="q"><div class="qq"><span class="qn">Q3</span>&Agrave; quoi sert le mail de questions &agrave; l'autre partie&nbsp;?</div><button class="opt" type="button" data-ok="0">&Agrave; contester formellement le contrat</button><button class="opt" type="button" data-ok="1">&Agrave; faire pr&eacute;ciser les points flous, sans accuser</button><button class="opt" type="button" data-ok="0">&Agrave; retarder la signature</button><div class="exp">Beaucoup de clauses inhabituelles viennent d'un mod&egrave;le recopi&eacute; que personne n'a relu. Une question ouverte, sans accusation, laisse &agrave; l'autre partie la possibilit&eacute; de retirer la clause sans perdre la face.</div></div></div>
+    <div class="qscore">Score : 0 / 0</div>
+  </div>
+</div>
+<div class="footer">
+  <p><strong>&#128218; Guide agent &mdash; Relecture de contrat</strong></p>
+  <p>Kit Juridique &middot; Formation Studeria &middot; Octobre 2026</p>
+</div>
+
+</div><!-- /content -->
+</div><!-- /main -->
+
+<button class="top" aria-label="Haut de page">&#8593;</button>
+
+<script>
+(function(){
+  var bar=document.querySelector('.progress'),top=document.querySelector('.top');
+  var links=[].slice.call(document.querySelectorAll('.sidebar a[href^="#"]'));
+  var chs=[].slice.call(document.querySelectorAll('.ch'));
+  function onScroll(){
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    bar.style.width=(h>0?window.scrollY/h*100:0)+'%';
+    top.classList.toggle('show',window.scrollY>600);
+    var cur=null;
+    chs.forEach(function(c){if(c.getBoundingClientRect().top<160)cur=c.id});
+    links.forEach(function(a){a.classList.toggle('active',a.getAttribute('href')==='#'+cur)});
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+  top.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})});
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){
+      if(e.isIntersecting){e.target.classList.add('vis');io.unobserve(e.target)}})},
+      {rootMargin:'0px 0px -60px 0px'});
+    chs.forEach(function(c){io.observe(c)});
+  } else { chs.forEach(function(c){c.classList.add('vis')}); }
+  links.forEach(function(a){a.addEventListener('click',function(){
+    document.querySelector('.sidebar').classList.remove('open')})});
+
+  /* bouton copier */
+  document.querySelectorAll('.copybtn').forEach(function(b){
+    b.addEventListener('click',function(){
+      var code=b.parentNode.querySelector('.code');
+      var t=code.innerText.replace(/^\/\/.*\n?/,'').trim();
+      var done=function(){b.textContent='Copie !';b.classList.add('done');
+        setTimeout(function(){b.textContent='Copier';b.classList.remove('done')},2000)};
+      if(navigator.clipboard&&window.isSecureContext){
+        navigator.clipboard.writeText(t).then(done,fallback);
+      } else { fallback(); }
+      function fallback(){
+        var ta=document.createElement('textarea');ta.value=t;
+        ta.style.position='fixed';ta.style.opacity=0;document.body.appendChild(ta);
+        ta.select();try{document.execCommand('copy');done()}catch(e){}
+        document.body.removeChild(ta);
+      }
+    });
+  });
+
+  /* quiz */
+  var qz=document.querySelector('.quiz');
+  if(qz){
+    var total=qz.querySelectorAll('.q').length,good=0,done=0;
+    var sc=document.querySelector('.qscore');
+    qz.querySelectorAll('.q').forEach(function(q){
+      q.querySelectorAll('button.opt').forEach(function(b){
+        b.addEventListener('click',function(){
+          if(q.classList.contains('answered'))return;
+          q.classList.add('answered');done++;
+          var ok=b.dataset.ok==='1';if(ok)good++;
+          b.classList.add(ok?'good':'bad');
+          if(!ok)q.querySelector('button.opt[data-ok="1"]').classList.add('good');
+          if(sc)sc.textContent=done<total?('Score : '+good+' / '+done+'  \u2014  '+(total-done)+' question(s) restante(s)')
+            :('Score final : '+good+' / '+total+(good===total?'  \u2014  parfait !':'  \u2014  relisez les chapitres concernes.'));
+        });
+      });
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
